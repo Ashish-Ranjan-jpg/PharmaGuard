@@ -12,7 +12,7 @@ require('dotenv').config();
 const { parseVCF, validateVCF } = require('./vcfParser');
 const { predictRisk } = require('./riskEngine');
 const { generateExplanation } = require('./geminiService');
-const { uploadVCFFile } = require('./cloudinaryService');
+const { uploadVCFFile, uploadProfileImage } = require('./cloudinaryService');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -155,6 +155,47 @@ app.post('/api/upload', upload.single('vcfFile'), async (req, res) => {
 });
 
 /**
+ * POST /api/upload-profile-image
+ * Upload profile image to Cloudinary
+ */
+app.post('/api/upload-profile-image', multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB for images
+  fileFilter: (req, file, cb) => {
+    console.log('Multer file filter:', file.mimetype);
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only JPEG, PNG and WebP images are allowed'), false);
+    }
+  },
+}).single('image'), async (req, res) => {
+  try {
+    console.log('Upload image request received');
+    if (!req.file) {
+      console.error('No file in request');
+      return res.status(400).json({ error: 'No image file uploaded' });
+    }
+
+    const userId = req.body.userId || 'anonymous';
+    console.log('Uploading for user:', userId, 'File size:', req.file.size);
+    
+    const result = await uploadProfileImage(req.file.buffer, userId);
+    console.log('Cloudinary upload result:', result.success ? 'Success' : 'Failed');
+
+    if (result.success) {
+      res.json(result);
+    } else {
+      res.status(500).json({ error: 'Upload failed', details: result.error });
+    }
+  } catch (error) {
+    console.error('Profile image upload error:', error);
+    res.status(500).json({ error: 'Upload failed', details: error.message });
+  }
+});
+
+/**
  * POST /api/validate-vcf
  * Validate a VCF file without full analysis
  */
@@ -206,16 +247,20 @@ app.get('/api/supported-drugs', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
+  console.error('API Error:', err);
+  
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ error: 'File too large', details: 'Maximum file size is 5MB' });
+      return res.status(400).json({ error: 'File too large', details: 'Maximum file size limit exceeded' });
     }
     return res.status(400).json({ error: 'File upload error', details: err.message });
   }
-  if (err.message === 'Only .vcf files are allowed') {
-    return res.status(400).json({ error: 'Invalid file type', details: 'Only .vcf files are accepted' });
+  
+  // Handle custom file filter errors
+  if (err.message.includes('Only') && err.message.includes('allowed')) {
+    return res.status(400).json({ error: 'Invalid file type', details: err.message });
   }
-  console.error('Unhandled error:', err);
+
   res.status(500).json({ error: 'Internal server error', details: err.message });
 });
 

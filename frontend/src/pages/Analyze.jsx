@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useAuth } from '../contexts/AuthContext';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import ResultsDisplay from '../components/ResultsDisplay';
 import toast, { Toaster } from 'react-hot-toast';
@@ -117,7 +117,11 @@ export default function Analyze() {
               createdAt: new Date().toISOString(),
             });
           }
-          console.log('History stored successfully');
+          // Increment analysis count in user profile
+          await updateDoc(doc(db, 'users', currentUser.uid), {
+            analysisCount: increment(resultsList.length)
+          });
+          console.log('History stored and count updated successfully');
         } catch (dbError) {
           console.error('Failed to save to history:', dbError);
         }

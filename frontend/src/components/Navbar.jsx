@@ -46,20 +46,23 @@ export default function Navbar() {
               <Link to="/history" className={`nav-link ${isActive('/history') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>
                 <FiClock /> History
               </Link>
-              <div className="nav-user">
-                <div className="user-avatar">
-                  {currentUser.photoURL ? (
-                    <img src={currentUser.photoURL} alt="avatar" />
-                  ) : (
-                    <FiUser />
-                  )}
-                </div>
-                <span className="user-name">{currentUser.displayName || currentUser.email?.split('@')[0]}</span>
+              <Link to="/profile" className={`nav-link mobile-only ${isActive('/profile') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>
+                <FiUser /> Profile
+              </Link>
+                <Link to="/profile" className="nav-user" onClick={() => setMenuOpen(false)}>
+                  <div className="user-avatar">
+                    {currentUser.photoURL ? (
+                      <img src={currentUser.photoURL} alt="avatar" />
+                    ) : (
+                      <FiUser />
+                    )}
+                  </div>
+                  <span className="user-name">{currentUser.displayName || currentUser.email?.split('@')[0]}</span>
+                </Link>
                 <button className="btn-logout" onClick={handleLogout}>
                   <FiLogOut /> Logout
                 </button>
-              </div>
-            </>
+              </>
           ) : (
             <>
               <Link to="/login" className={`nav-link ${isActive('/login') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>
