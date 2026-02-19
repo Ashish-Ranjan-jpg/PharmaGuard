@@ -7,8 +7,9 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged,
   updateProfile,
+  deleteUser,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs } from 'firebase/firestore';
 import { auth, googleProvider, db } from '../config/firebase';
 
 const AuthContext = createContext();
@@ -32,6 +33,10 @@ export function AuthProvider({ children }) {
       createdAt: new Date().toISOString(),
       analysisCount: 0,
       lastActive: new Date().toISOString(),
+      dob: '',
+      gender: '',
+      bloodGroup: '',
+      phone: '',
     });
     return result;
   }
@@ -52,6 +57,10 @@ export function AuthProvider({ children }) {
         createdAt: new Date().toISOString(),
         analysisCount: 0,
         lastActive: new Date().toISOString(),
+        dob: '',
+        gender: '',
+        bloodGroup: '',
+        phone: '',
       });
     }
     return result;
@@ -65,28 +74,80 @@ export function AuthProvider({ children }) {
     return sendPasswordResetEmail(auth, email);
   }
 
-  async function loadUserProfile(user) {
-    if (!user) {
-      setUserProfile(null);
-      return;
+  async function updateProfileData(data) {
+    if (!currentUser) return;
+    await updateDoc(doc(db, 'users', currentUser.uid), {
+      ...data,
+      lastActive: new Date().toISOString(),
+    });
+    if (data.displayName) {
+      await updateProfile(currentUser, { displayName: data.displayName });
     }
+  }
+
+  async function updateUserPhoto(photoURL) {
+    if (!currentUser) return;
+    await updateProfile(currentUser, { photoURL });
+    await updateDoc(doc(db, 'users', currentUser.uid), {
+      photoURL,
+      lastActive: new Date().toISOString(),
+    });
+  }
+
+  async function deleteUserAccount() {
+    if (!currentUser) return;
+    const uid = currentUser.uid;
+    await deleteDoc(doc(db, 'users', uid));
+    await deleteUser(currentUser);
+  }
+
+  async function syncAnalysisCount(user) {
+    if (!user) return;
     try {
+      const q = query(collection(db, 'analyses'), where('userId', '==', user.uid));
+      const snapshot = await getDocs(q);
+      const actualCount = snapshot.size;
+      
       const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists()) {
-        setUserProfile(userDoc.data());
+      if (userDoc.exists() && userDoc.data().analysisCount !== actualCount) {
+        await updateDoc(doc(db, 'users', user.uid), {
+          analysisCount: actualCount
+        });
+        console.log(`Synced analysisCount for ${user.uid}: ${actualCount}`);
       }
     } catch (error) {
-      console.error('Error loading user profile:', error);
+      console.error('Error syncing analysis count:', error);
     }
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    let unsubscribeProfile = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
-      await loadUserProfile(user);
+      
+      if (user) {
+        // Start real-time profile sync
+        unsubscribeProfile = onSnapshot(doc(db, 'users', user.uid), (doc) => {
+          if (doc.exists()) {
+            setUserProfile(doc.data());
+          }
+        });
+
+        // Background sync of analysis count to fix any inconsistencies
+        syncAnalysisCount(user);
+      } else {
+        setUserProfile(null);
+        if (unsubscribeProfile) unsubscribeProfile();
+      }
+      
       setLoading(false);
     });
-    return unsubscribe;
+
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeProfile) unsubscribeProfile();
+    };
   }, []);
 
   const value = {
@@ -97,6 +158,9 @@ export function AuthProvider({ children }) {
     loginWithGoogle,
     logout,
     resetPassword,
+    updateProfileData,
+    updateUserPhoto,
+    deleteUserAccount,
     loading,
   };
 

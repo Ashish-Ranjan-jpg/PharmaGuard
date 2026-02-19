@@ -79,6 +79,10 @@
   transition: all 0.2s ease;
 }
 
+.mobile-only {
+  display: none;
+}
+
 .nav-link:hover,
 .nav-link.active {
   color: #00f5a0;
@@ -105,6 +109,12 @@
   margin-left: 0.5rem;
   padding-left: 1rem;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.nav-user:hover {
+  opacity: 0.8;
 }
 
 .user-avatar {
@@ -170,6 +180,15 @@
     transform: translateY(-120%);
     transition: transform 0.3s ease;
     border-bottom: 1px solid rgba(0, 245, 160, 0.1);
+  }
+
+  .mobile-only {
+    display: flex;
+    width: 100%;
+  }
+
+  .nav-user {
+    display: none;
   }
 
   .navbar-links.active {
