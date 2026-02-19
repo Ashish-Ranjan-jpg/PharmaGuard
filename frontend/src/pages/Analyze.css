@@ -38,6 +38,13 @@
   align-items: start;
 }
 
+.input-section {
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
 /* Cards */
 .card {
   background: rgba(255, 255, 255, 0.03);
@@ -73,7 +80,8 @@
   transition: all 0.3s ease;
 }
 
-.dropzone:hover, .dropzone.active {
+.dropzone:hover,
+.dropzone.active {
   border-color: rgba(0, 245, 160, 0.3);
   background: rgba(0, 245, 160, 0.03);
 }
@@ -292,12 +300,8 @@
 }
 
 /* Results Section */
-.results-section {
-  position: sticky;
-  top: 80px;
-}
-
-.results-placeholder, .results-loading {
+.results-placeholder,
+.results-loading {
   background: rgba(255, 255, 255, 0.02);
   border: 1px dashed rgba(255, 255, 255, 0.08);
   border-radius: 16px;
@@ -311,12 +315,14 @@
   margin-bottom: 1rem;
 }
 
-.results-placeholder h3, .results-loading h3 {
+.results-placeholder h3,
+.results-loading h3 {
   color: rgba(255, 255, 255, 0.5);
   margin-bottom: 0.25rem;
 }
 
-.results-placeholder p, .results-loading p {
+.results-placeholder p,
+.results-loading p {
   color: rgba(255, 255, 255, 0.3);
   font-size: 0.85rem;
 }
@@ -329,14 +335,18 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 900px) {
   .analyze-grid {
     grid-template-columns: 1fr;
   }
-  .results-section {
+  .input-section {
     position: static;
+    max-height: none;
+    overflow-y: visible;
   }
 }
