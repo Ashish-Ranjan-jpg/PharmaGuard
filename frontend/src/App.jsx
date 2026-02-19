@@ -10,8 +10,24 @@ import Dashboard from './pages/Dashboard';
 import Analyze from './pages/Analyze';
 import History from './pages/History';
 import Profile from './pages/Profile';
+import { useEffect } from 'react';
+import axios from "axios"
 
 function App() {
+
+  const startServer= async()=>{
+  const data= await axios.get(`${import.meta.env.VITE_API_URL}/api/health`)
+  console.log(data.data);
+
+  }
+
+  useEffect(()=>{
+
+startServer();
+
+  },[])
+
+
   return (
     <>
       <Navbar />
