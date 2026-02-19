@@ -257,9 +257,9 @@ export default function Analyze() {
                   <span className="spinner"></span> Analyzing...
                 </>
               ) : (
-                <>
+                <button disabled={!Boolean(validationResult)} className='btn-analyze '>
                   <GiDna1 /> Run Analysis
-                </>
+                </button>
               )}
             </button>
           </div>
