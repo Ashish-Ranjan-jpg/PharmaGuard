@@ -1,19 +1,58 @@
-import { useState } from 'react';
-import { FiChevronDown, FiChevronUp, FiCopy, FiDownload, FiCheckCircle, FiAlertTriangle, FiAlertCircle, FiInfo } from 'react-icons/fi';
-import { GiDna1 } from 'react-icons/gi';
-import toast from 'react-hot-toast';
-import './ResultsDisplay.css';
+import { useState } from "react";
+import {
+  FiChevronDown,
+  FiChevronUp,
+  FiCopy,
+  FiDownload,
+  FiCheckCircle,
+  FiAlertTriangle,
+  FiAlertCircle,
+  FiInfo,
+  FiActivity,
+} from "react-icons/fi";
+import toast from "react-hot-toast";
+import "./ResultsDisplay.css";
 
 const RISK_COLORS = {
-  Safe: { bg: 'rgba(0, 245, 160, 0.1)', color: '#00f5a0', border: 'rgba(0, 245, 160, 0.3)', icon: <FiCheckCircle /> },
-  'Adjust Dosage': { bg: 'rgba(255, 217, 61, 0.1)', color: '#ffd93d', border: 'rgba(255, 217, 61, 0.3)', icon: <FiAlertTriangle /> },
-  Toxic: { bg: 'rgba(255, 107, 107, 0.1)', color: '#ff6b6b', border: 'rgba(255, 107, 107, 0.3)', icon: <FiAlertCircle /> },
-  Ineffective: { bg: 'rgba(255, 159, 67, 0.1)', color: '#ff9f43', border: 'rgba(255, 159, 67, 0.3)', icon: <FiAlertTriangle /> },
-  Unknown: { bg: 'rgba(136, 136, 136, 0.1)', color: '#888', border: 'rgba(136, 136, 136, 0.3)', icon: <FiInfo /> },
+  Safe: {
+    bg: "rgba(0, 245, 160, 0.1)",
+    color: "#00f5a0",
+    border: "rgba(0, 245, 160, 0.3)",
+    icon: <FiCheckCircle />,
+  },
+  "Adjust Dosage": {
+    bg: "rgba(255, 217, 61, 0.1)",
+    color: "#ffd93d",
+    border: "rgba(255, 217, 61, 0.3)",
+    icon: <FiAlertTriangle />,
+  },
+  Toxic: {
+    bg: "rgba(255, 107, 107, 0.1)",
+    color: "#ff6b6b",
+    border: "rgba(255, 107, 107, 0.3)",
+    icon: <FiAlertCircle />,
+  },
+  Ineffective: {
+    bg: "rgba(255, 159, 67, 0.1)",
+    color: "#ff9f43",
+    border: "rgba(255, 159, 67, 0.3)",
+    icon: <FiAlertTriangle />,
+  },
+  Unknown: {
+    bg: "rgba(136, 136, 136, 0.1)",
+    color: "#888",
+    border: "rgba(136, 136, 136, 0.3)",
+    icon: <FiInfo />,
+  },
 };
 
 function SingleResult({ result }) {
-  const [expanded, setExpanded] = useState({ variants: false, recommendation: false, explanation: false, json: false });
+  const [expanded, setExpanded] = useState({
+    variants: false,
+    recommendation: false,
+    explanation: false,
+    json: false,
+  });
   const risk = result.risk_assessment;
   const profile = result.pharmacogenomic_profile;
   const rec = result.clinical_recommendation;
@@ -21,33 +60,45 @@ function SingleResult({ result }) {
   const riskStyle = RISK_COLORS[risk?.risk_label] || RISK_COLORS.Unknown;
 
   function toggle(section) {
-    setExpanded(prev => ({ ...prev, [section]: !prev[section] }));
+    setExpanded((prev) => ({ ...prev, [section]: !prev[section] }));
   }
 
   function copyJSON() {
     navigator.clipboard.writeText(JSON.stringify(result, null, 2));
-    toast.success('JSON copied to clipboard!');
+    toast.success("JSON copied to clipboard!");
   }
 
   function downloadJSON() {
-    const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(result, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `pharmaguard_${result.patient_id}_${result.drug}_${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success('JSON downloaded!');
+    toast.success("JSON downloaded!");
   }
 
   return (
     <div className="result-card">
       {/* Risk Banner */}
-      <div className="risk-banner" style={{ background: riskStyle.bg, borderColor: riskStyle.border }}>
-        <div className="risk-icon" style={{ color: riskStyle.color }}>{riskStyle.icon}</div>
+      <div
+        className="risk-banner"
+        style={{ background: riskStyle.bg, borderColor: riskStyle.border }}
+      >
+        <div className="risk-icon" style={{ color: riskStyle.color }}>
+          {riskStyle.icon}
+        </div>
         <div className="risk-details">
-          <span className="risk-label" style={{ color: riskStyle.color }}>{risk?.risk_label}</span>
-          <span className="risk-severity">Severity: {risk?.severity} • Confidence: {(risk?.confidence_score * 100).toFixed(0)}%</span>
+          <span className="risk-label" style={{ color: riskStyle.color }}>
+            {risk?.risk_label}
+          </span>
+          <span className="risk-severity">
+            Severity: {risk?.severity} • Confidence:{" "}
+            {(risk?.confidence_score * 100).toFixed(0)}%
+          </span>
         </div>
         <span className="risk-drug">{result.drug}</span>
       </div>
@@ -60,7 +111,9 @@ function SingleResult({ result }) {
         </div>
         <div className="profile-item">
           <span className="profile-label">Gene</span>
-          <span className="profile-value highlight">{profile?.primary_gene}</span>
+          <span className="profile-value highlight">
+            {profile?.primary_gene}
+          </span>
         </div>
         <div className="profile-item">
           <span className="profile-label">Diplotype</span>
@@ -74,8 +127,9 @@ function SingleResult({ result }) {
 
       {/* Expandable: Detected Variants */}
       <div className="expandable">
-        <button className="expand-btn" onClick={() => toggle('variants')}>
-          <GiDna1 /> Detected Variants ({profile?.detected_variants?.length || 0})
+        <button className="expand-btn" onClick={() => toggle("variants")}>
+          <FiActivity /> Detected Variants (
+          {profile?.detected_variants?.length || 0})
           {expanded.variants ? <FiChevronUp /> : <FiChevronDown />}
         </button>
         {expanded.variants && (
@@ -87,19 +141,28 @@ function SingleResult({ result }) {
                     <div className="variant-header">
                       <span className="variant-rsid">{v.rsid}</span>
                       <span className="variant-star">{v.star_allele}</span>
-                      <span className={`variant-effect ${v.functional_effect}`}>{v.functional_effect}</span>
+                      <span className={`variant-effect ${v.functional_effect}`}>
+                        {v.functional_effect}
+                      </span>
                     </div>
                     <p className="variant-desc">{v.clinical_description}</p>
                     <div className="variant-meta">
-                      <span>Chr{v.chromosome}:{v.position}</span>
-                      <span>{v.ref_allele}→{v.alt_allele}</span>
+                      <span>
+                        Chr{v.chromosome}:{v.position}
+                      </span>
+                      <span>
+                        {v.ref_allele}→{v.alt_allele}
+                      </span>
                       <span>{v.zygosity}</span>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="no-data">No pharmacogenomic variants detected for this gene. Assumed wildtype (*1/*1).</p>
+              <p className="no-data">
+                No pharmacogenomic variants detected for this gene. Assumed
+                wildtype (*1/*1).
+              </p>
             )}
           </div>
         )}
@@ -107,7 +170,7 @@ function SingleResult({ result }) {
 
       {/* Expandable: Clinical Recommendation */}
       <div className="expandable">
-        <button className="expand-btn" onClick={() => toggle('recommendation')}>
+        <button className="expand-btn" onClick={() => toggle("recommendation")}>
           <FiAlertTriangle /> Clinical Recommendation
           {expanded.recommendation ? <FiChevronUp /> : <FiChevronDown />}
         </button>
@@ -128,17 +191,23 @@ function SingleResult({ result }) {
             {rec?.alternative_drugs?.length > 0 && (
               <div className="rec-section">
                 <h4>Alternative Drugs</h4>
-                <ul>{rec.alternative_drugs.map((d, i) => <li key={i}>{d}</li>)}</ul>
+                <ul>
+                  {rec.alternative_drugs.map((d, i) => (
+                    <li key={i}>{d}</li>
+                  ))}
+                </ul>
               </div>
             )}
-            <div className="rec-badge">CPIC Level: {rec?.cpic_guideline_level}</div>
+            <div className="rec-badge">
+              CPIC Level: {rec?.cpic_guideline_level}
+            </div>
           </div>
         )}
       </div>
 
       {/* Expandable: AI Explanation */}
       <div className="expandable">
-        <button className="expand-btn" onClick={() => toggle('explanation')}>
+        <button className="expand-btn" onClick={() => toggle("explanation")}>
           <FiInfo /> AI-Generated Explanation
           {expanded.explanation ? <FiChevronUp /> : <FiChevronDown />}
         </button>
@@ -173,15 +242,19 @@ function SingleResult({ result }) {
 
       {/* Expandable: Raw JSON */}
       <div className="expandable">
-        <button className="expand-btn" onClick={() => toggle('json')}>
+        <button className="expand-btn" onClick={() => toggle("json")}>
           <FiDownload /> Raw JSON Output
           {expanded.json ? <FiChevronUp /> : <FiChevronDown />}
         </button>
         {expanded.json && (
           <div className="expand-content">
             <div className="json-actions">
-              <button onClick={copyJSON}><FiCopy /> Copy</button>
-              <button onClick={downloadJSON}><FiDownload /> Download</button>
+              <button onClick={copyJSON}>
+                <FiCopy /> Copy
+              </button>
+              <button onClick={downloadJSON}>
+                <FiDownload /> Download
+              </button>
             </div>
             <pre className="json-block">{JSON.stringify(result, null, 2)}</pre>
           </div>
@@ -197,7 +270,9 @@ export default function ResultsDisplay({ data }) {
   return (
     <div className="results-display">
       {data.multi_drug_analysis && (
-        <div className="multi-badge">{data.total_drugs_analyzed} drugs analyzed</div>
+        <div className="multi-badge">
+          {data.total_drugs_analyzed} drugs analyzed
+        </div>
       )}
       {results.map((result, i) => (
         <SingleResult key={i} result={result} />

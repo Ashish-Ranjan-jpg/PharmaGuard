@@ -13,21 +13,24 @@
 }
 
 .analyze-header h1 {
-  color: #fff;
-  font-size: 1.8rem;
-  font-weight: 800;
+  color: var(--text-primary);
+  font-size: 1.75rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
+.analyze-header h1 .accent-text {
+  color: var(--accent);
+}
+
 .header-icon {
-  color: #00f5a0;
-  animation: spin 4s linear infinite;
+  color: var(--accent);
 }
 
 .analyze-header p {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
   margin-top: 0.25rem;
 }
 
@@ -44,81 +47,91 @@
   top: 80px;
   max-height: calc(100vh - 100px);
   overflow-y: auto;
-  padding-right: 0.5rem; /* Space for scrollbar */
+  padding-right: 0.5rem;
 }
 
 /* Custom scrollbar for sticky sections */
 .input-section::-webkit-scrollbar,
 .results-section::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
 
 .input-section::-webkit-scrollbar-track,
 .results-section::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: transparent;
 }
 
 .input-section::-webkit-scrollbar-thumb,
 .results-section::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border);
   border-radius: 10px;
 }
 
 /* Cards */
 .card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
   padding: 1.5rem;
   margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--border-hover);
 }
 
 .card h2 {
-  color: #fff;
+  color: var(--text-primary);
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.25rem;
 }
 
+.card h2 svg {
+  color: var(--accent);
+}
+
 .card-desc {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   font-size: 0.82rem;
   margin-bottom: 1rem;
 }
 
 /* Dropzone */
 .dropzone {
-  border: 2px dashed rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
   padding: 2.5rem 1.5rem;
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
-.dropzone:hover,
-.dropzone.active {
-  border-color: rgba(0, 245, 160, 0.3);
-  background: rgba(0, 245, 160, 0.03);
+.dropzone:hover, .dropzone.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .dropzone-icon {
   font-size: 2.5rem;
-  color: rgba(0, 245, 160, 0.4);
+  color: var(--accent);
+  opacity: 0.5;
   margin-bottom: 0.75rem;
 }
 
 .dropzone-text {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 0.95rem;
   margin-bottom: 0.25rem;
 }
 
 .dropzone-hint {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 
@@ -127,8 +140,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(0, 245, 160, 0.05);
-  border: 1px solid rgba(0, 245, 160, 0.15);
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.85rem 1rem;
 }
@@ -141,17 +154,17 @@
 
 .file-icon {
   font-size: 1.5rem;
-  color: #00f5a0;
+  color: var(--accent);
 }
 
 .file-info strong {
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.9rem;
   display: block;
 }
 
 .file-info span {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   font-size: 0.75rem;
 }
 
@@ -165,9 +178,9 @@
   align-items: center;
   gap: 0.3rem;
   padding: 0.4rem 0.75rem;
-  background: rgba(0, 217, 245, 0.1);
-  color: #00d9f5;
-  border: 1px solid rgba(0, 217, 245, 0.2);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 0.8rem;
   cursor: pointer;
@@ -175,21 +188,22 @@
 }
 
 .btn-validate:hover {
-  background: rgba(0, 217, 245, 0.2);
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .btn-remove {
   padding: 0.4rem;
-  background: rgba(255, 60, 60, 0.1);
-  color: #ff6b6b;
-  border: 1px solid rgba(255, 60, 60, 0.2);
+  background: var(--risk-danger-bg);
+  color: var(--risk-danger);
+  border: 1px solid transparent;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .btn-remove:hover {
-  background: rgba(255, 60, 60, 0.2);
+  border-color: var(--risk-danger);
 }
 
 /* Validation */
@@ -205,15 +219,15 @@
 }
 
 .validation-result.valid {
-  background: rgba(0, 245, 160, 0.05);
-  color: #00f5a0;
-  border: 1px solid rgba(0, 245, 160, 0.15);
+  background: var(--risk-safe-bg);
+  color: var(--risk-safe);
+  border: 1px solid transparent;
 }
 
 .validation-result.invalid {
-  background: rgba(255, 60, 60, 0.05);
-  color: #ff6b6b;
-  border: 1px solid rgba(255, 60, 60, 0.15);
+  background: var(--risk-danger-bg);
+  color: var(--risk-danger);
+  border: 1px solid transparent;
 }
 
 /* Drug Chips */
@@ -229,8 +243,8 @@
   flex-direction: column;
   align-items: center;
   padding: 0.6rem 1rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -238,47 +252,48 @@
 }
 
 .drug-chip:hover {
-  border-color: rgba(0, 245, 160, 0.25);
+  border-color: var(--accent);
 }
 
 .drug-chip.selected {
-  background: rgba(0, 245, 160, 0.1);
-  border-color: rgba(0, 245, 160, 0.4);
+  background: var(--accent-soft);
+  border-color: var(--accent);
 }
 
 .chip-name {
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 600;
 }
 
 .chip-gene {
-  color: rgba(0, 217, 245, 0.7);
+  color: var(--text-muted);
   font-size: 0.7rem;
 }
 
 .drug-chip.selected .chip-name {
-  color: #00f5a0;
+  color: var(--accent);
 }
 
 .drug-text-input {
   width: 100%;
   padding: 0.7rem 1rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   border-radius: 10px;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.9rem;
   outline: none;
   box-sizing: border-box;
+  transition: border-color 0.2s ease;
 }
 
 .drug-text-input:focus {
-  border-color: rgba(0, 245, 160, 0.3);
+  border-color: var(--input-focus);
 }
 
 .drug-text-input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-muted);
 }
 
 /* Analyze Button */
@@ -289,19 +304,20 @@
   justify-content: center;
   gap: 0.6rem;
   padding: 1rem;
-  background: linear-gradient(135deg, #00f5a0, #00d9f5);
-  color: #0a0a14;
-  font-weight: 800;
-  font-size: 1.1rem;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
+  font-size: 1.05rem;
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .btn-analyze:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0, 245, 160, 0.3);
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-analyze:disabled {
@@ -312,8 +328,9 @@
 .spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(10, 10, 20, 0.3);
-  border-top-color: #0a0a14;
+  border: 2px solid transparent;
+  border-top-color: var(--accent-text);
+  border-right-color: var(--accent-text);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
@@ -322,55 +339,53 @@
   width: 14px;
   height: 14px;
   border-width: 1.5px;
-  border-top-color: #00d9f5;
+  border-top-color: var(--accent);
 }
 
 /* Results Section */
-.results-placeholder,
-.results-loading {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+.results-placeholder, .results-loading {
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
   padding: 4rem 2rem;
   text-align: center;
 }
 
 .placeholder-icon {
   font-size: 3rem;
-  color: rgba(0, 245, 160, 0.15);
+  color: var(--text-muted);
+  opacity: 0.3;
   margin-bottom: 1rem;
 }
 
-.results-placeholder h3,
-.results-loading h3 {
-  color: rgba(255, 255, 255, 0.5);
+.results-placeholder h3, .results-loading h3 {
+  color: var(--text-secondary);
+  font-weight: 600;
   margin-bottom: 0.25rem;
 }
 
-.results-placeholder p,
-.results-loading p {
-  color: rgba(255, 255, 255, 0.3);
+.results-placeholder p, .results-loading p {
+  color: var(--text-muted);
   font-size: 0.85rem;
 }
 
 .dna-loader {
   font-size: 3rem;
-  color: #00f5a0;
+  color: var(--accent);
   animation: spin 1.5s linear infinite;
   margin-bottom: 1rem;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
 @media (max-width: 900px) {
   .analyze-grid {
     grid-template-columns: 1fr;
   }
-  .input-section {
+  .input-section,
+  .results-section {
     position: static;
     max-height: none;
     overflow-y: visible;

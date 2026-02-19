@@ -1,23 +1,39 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { FiUser, FiMail, FiClock, FiTrash2, FiSave, FiAlertTriangle, FiX, FiCamera, FiUpload } from 'react-icons/fi';
-import { useRef } from 'react';
-import toast from 'react-hot-toast';
-import './Profile.css';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import {
+  FiUser,
+  FiMail,
+  FiClock,
+  FiTrash2,
+  FiSave,
+  FiAlertTriangle,
+  FiX,
+  FiCamera,
+  FiUpload,
+} from "react-icons/fi";
+import { useRef } from "react";
+import toast from "react-hot-toast";
+import "./Profile.css";
 
 export default function Profile() {
-  const { currentUser, userProfile, updateProfileData, updateUserPhoto, deleteUserAccount } = useAuth();
+  const {
+    currentUser,
+    userProfile,
+    updateProfileData,
+    updateUserPhoto,
+    deleteUserAccount,
+  } = useAuth();
   const fileInputRef = useRef(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  
+
   // Form State
   const [formData, setFormData] = useState({
-    displayName: currentUser?.displayName || '',
-    dob: userProfile?.dob || '',
-    gender: userProfile?.gender || '',
-    bloodGroup: userProfile?.bloodGroup || '',
-    phone: userProfile?.phone || '',
+    displayName: currentUser?.displayName || "",
+    dob: userProfile?.dob || "",
+    gender: userProfile?.gender || "",
+    bloodGroup: userProfile?.bloodGroup || "",
+    phone: userProfile?.phone || "",
   });
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -28,26 +44,27 @@ export default function Profile() {
   // Sync state if userProfile loads or updates, but not while user is typing
   useEffect(() => {
     if (userProfile && !isUpdating) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        displayName: currentUser?.displayName || prev.displayName || '',
-        dob: userProfile.dob || prev.dob || '',
-        gender: userProfile.gender || prev.gender || '',
-        bloodGroup: userProfile.bloodGroup || prev.bloodGroup || '',
-        phone: userProfile.phone || prev.phone || '',
+        displayName: currentUser?.displayName || prev.displayName || "",
+        dob: userProfile.dob || prev.dob || "",
+        gender: userProfile.gender || prev.gender || "",
+        bloodGroup: userProfile.bloodGroup || prev.bloodGroup || "",
+        phone: userProfile.phone || prev.phone || "",
       }));
     }
   }, [userProfile, currentUser, isUpdating]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    if (!formData.displayName.trim()) return toast.error('Display name cannot be empty');
-    
+    if (!formData.displayName.trim())
+      return toast.error("Display name cannot be empty");
+
     setIsUpdating(true);
     try {
       await updateProfileData({
@@ -57,10 +74,10 @@ export default function Profile() {
         bloodGroup: formData.bloodGroup,
         phone: formData.phone,
       });
-      toast.success('Profile updated successfully');
+      toast.success("Profile updated successfully");
     } catch (error) {
-      console.error('Update profile error:', error);
-      toast.error('Failed to update profile');
+      console.error("Update profile error:", error);
+      toast.error("Failed to update profile");
     } finally {
       setIsUpdating(false);
     }
@@ -70,11 +87,11 @@ export default function Profile() {
     setIsDeleting(true);
     try {
       await deleteUserAccount();
-      toast.success('Account deleted successfully');
-      navigate('/');
+      toast.success("Account deleted successfully");
+      navigate("/");
     } catch (error) {
-      console.error('Delete account error:', error);
-      toast.error('Failed to delete account. You may need to re-authenticate.');
+      console.error("Delete account error:", error);
+      toast.error("Failed to delete account. You may need to re-authenticate.");
     } finally {
       setIsDeleting(false);
       setShowDeleteModal(false);
@@ -87,35 +104,41 @@ export default function Profile() {
 
     // Check file size (2MB limit)
     if (file.size > 2 * 1024 * 1024) {
-      return toast.error('Image must be less than 2MB');
+      return toast.error("Image must be less than 2MB");
     }
 
     const formData = new FormData();
-    formData.append('image', file);
-    formData.append('userId', currentUser.uid);
+    formData.append("image", file);
+    formData.append("userId", currentUser.uid);
 
     setIsUploadingImage(true);
-    const loadingToast = toast.loading('Uploading image...');
+    const loadingToast = toast.loading("Uploading image...");
 
     try {
-      console.log('Fetching:', `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/upload-profile-image`);
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/upload-profile-image`, {
-        method: 'POST',
-        body: formData,
-      });
+      console.log(
+        "Fetching:",
+        `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/upload-profile-image`,
+      );
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/upload-profile-image`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
-      console.log('Response Status:', response.status);
+      console.log("Response Status:", response.status);
       const data = await response.json();
-      console.log('Response Data:', data);
+      console.log("Response Data:", data);
 
       if (data.success) {
         await updateUserPhoto(data.url);
-        toast.success('Profile picture updated!', { id: loadingToast });
+        toast.success("Profile picture updated!", { id: loadingToast });
       } else {
-        throw new Error(data.details || data.error || 'Upload failed');
+        throw new Error(data.details || data.error || "Upload failed");
       }
     } catch (error) {
-      console.error('Detailed Image upload error:', error);
+      console.error("Detailed Image upload error:", error);
       toast.error(`Upload failed: ${error.message}`, { id: loadingToast });
     } finally {
       setIsUploadingImage(false);
@@ -123,25 +146,25 @@ export default function Profile() {
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const hasChanges = () => {
-    const currentName = formData.displayName?.trim() || '';
-    const storedName = currentUser?.displayName?.trim() || '';
-    const currentDob = formData.dob || '';
-    const storedDob = userProfile?.dob || '';
-    const currentGender = formData.gender || '';
-    const storedGender = userProfile?.gender || '';
-    const currentBlood = formData.bloodGroup || '';
-    const storedBlood = userProfile?.bloodGroup || '';
-    const currentPhone = formData.phone || '';
-    const storedPhone = userProfile?.phone || '';
+    const currentName = formData.displayName?.trim() || "";
+    const storedName = currentUser?.displayName?.trim() || "";
+    const currentDob = formData.dob || "";
+    const storedDob = userProfile?.dob || "";
+    const currentGender = formData.gender || "";
+    const storedGender = userProfile?.gender || "";
+    const currentBlood = formData.bloodGroup || "";
+    const storedBlood = userProfile?.bloodGroup || "";
+    const currentPhone = formData.phone || "";
+    const storedPhone = userProfile?.phone || "";
 
     return (
       currentName !== storedName ||
@@ -157,16 +180,23 @@ export default function Profile() {
       <div className="profile-container">
         <div className="profile-header">
           <div className="profile-image-section">
-            <div className="profile-image-container" onClick={() => fileInputRef.current?.click()}>
+            <div
+              className="profile-image-container"
+              onClick={() => fileInputRef.current?.click()}
+            >
               {isUploadingImage ? (
                 <div className="image-loader">
                   <div className="spinner-small"></div>
                 </div>
               ) : (
                 <>
-                  <img 
-                    src={userProfile?.photoURL || currentUser?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser?.displayName || 'User')}&background=00f5a0&color=0a0a14`} 
-                    alt="Profile" 
+                  <img
+                    src={
+                      userProfile?.photoURL ||
+                      currentUser?.photoURL ||
+                      `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser?.displayName || "User")}&background=00f5a0&color=0a0a14`
+                    }
+                    alt="Profile"
                   />
                   <div className="image-overlay">
                     <FiCamera />
@@ -175,44 +205,60 @@ export default function Profile() {
                 </>
               )}
             </div>
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              onChange={handleImageChange} 
-              accept="image/*" 
-              style={{ display: 'none' }} 
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              accept="image/*"
+              style={{ display: "none" }}
             />
           </div>
           <div className="header-text">
-            <h1>My <span className="gradient-text">Profile</span></h1>
+            <h1>
+              My <span className="accent-text">Profile</span>
+            </h1>
             <p>Manage your account settings and personal information</p>
           </div>
         </div>
 
         <div className="profile-card">
-          <h2><FiUser /> Account Information</h2>
+          <h2>
+            <FiUser /> Account Information
+          </h2>
           <div className="profile-info-grid">
             <div className="info-item">
               <span className="info-label">Email Address</span>
-              <div className="info-value" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <FiMail style={{ color: 'rgba(255,255,255,0.4)' }} /> {currentUser?.email}
+              <div
+                className="info-value"
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <FiMail style={{ color: "rgba(255,255,255,0.4)" }} />{" "}
+                {currentUser?.email}
               </div>
             </div>
             <div className="info-item">
               <span className="info-label">Member Since</span>
-              <div className="info-value" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <FiClock style={{ color: 'rgba(255,255,255,0.4)' }} /> {formatDate(userProfile?.createdAt)}
+              <div
+                className="info-value"
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <FiClock style={{ color: "rgba(255,255,255,0.4)" }} />{" "}
+                {formatDate(userProfile?.createdAt)}
               </div>
             </div>
             <div className="info-item">
               <span className="info-label">Analyses Performed</span>
-              <div className="info-value">{userProfile?.analysisCount || 0}</div>
+              <div className="info-value">
+                {userProfile?.analysisCount || 0}
+              </div>
             </div>
           </div>
         </div>
 
         <div className="profile-card">
-          <h2><FiSave /> Edit Health Profile</h2>
+          <h2>
+            <FiSave /> Edit Health Profile
+          </h2>
           <form onSubmit={handleUpdateProfile} className="profile-form">
             <div className="form-grid">
               <div className="form-group">
@@ -294,20 +340,30 @@ export default function Profile() {
               </div>
             </div>
 
-            <button type="submit" className="btn-update" disabled={isUpdating || !hasChanges()}>
+            <button
+              type="submit"
+              className="btn-update"
+              disabled={isUpdating || !hasChanges()}
+            >
               {isUpdating ? <div className="spinner-small"></div> : <FiSave />}
-              {isUpdating ? 'Updating...' : 'Save Changes'}
+              {isUpdating ? "Updating..." : "Save Changes"}
             </button>
           </form>
         </div>
 
         <div className="profile-card danger-zone">
-          <h2><FiAlertTriangle /> Danger Zone</h2>
+          <h2>
+            <FiAlertTriangle /> Danger Zone
+          </h2>
           <p className="danger-text">
-            Once you delete your account, there is no going back. This will permanently remove your profile 
-            and all associated data from PharmaGuard.
+            Once you delete your account, there is no going back. This will
+            permanently remove your profile and all associated data from
+            PharmaGuard.
           </p>
-          <button className="btn-delete" onClick={() => setShowDeleteModal(true)}>
+          <button
+            className="btn-delete"
+            onClick={() => setShowDeleteModal(true)}
+          >
             <FiTrash2 /> Delete Account
           </button>
         </div>
@@ -316,25 +372,28 @@ export default function Profile() {
       {showDeleteModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2><FiAlertTriangle /> Delete Account?</h2>
+            <h2>
+              <FiAlertTriangle /> Delete Account?
+            </h2>
             <p>
-              Are you sure you want to delete your account? This action is permanent and cannot be undone. 
-              All your genomic analysis history will be lost.
+              Are you sure you want to delete your account? This action is
+              permanent and cannot be undone. All your genomic analysis history
+              will be lost.
             </p>
             <div className="modal-actions">
-              <button 
-                className="btn-cancel" 
+              <button
+                className="btn-cancel"
                 onClick={() => setShowDeleteModal(false)}
                 disabled={isDeleting}
               >
                 No, Keep Account
               </button>
-              <button 
-                className="btn-confirm-delete" 
+              <button
+                className="btn-confirm-delete"
                 onClick={handleDeleteAccount}
                 disabled={isDeleting}
               >
-                {isDeleting ? 'Deleting...' : 'Yes, Delete Permanently'}
+                {isDeleting ? "Deleting..." : "Yes, Delete Permanently"}
               </button>
             </div>
           </div>

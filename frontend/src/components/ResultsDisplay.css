@@ -7,19 +7,20 @@
 .multi-badge {
   text-align: center;
   padding: 0.4rem 1rem;
-  background: rgba(0, 217, 245, 0.1);
-  color: #00d9f5;
-  border: 1px solid rgba(0, 217, 245, 0.2);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 0.82rem;
   font-weight: 600;
 }
 
 .result-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 /* Risk Banner */
@@ -28,11 +29,11 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid var(--border);
 }
 
 .risk-icon {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
 }
 
 .risk-details {
@@ -42,20 +43,20 @@
 }
 
 .risk-label {
-  font-size: 1.1rem;
-  font-weight: 800;
+  font-size: 1.05rem;
+  font-weight: 700;
 }
 
 .risk-severity {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--text-muted);
 }
 
 .risk-drug {
   font-size: 0.8rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.06);
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-elevated);
   padding: 0.3rem 0.7rem;
   border-radius: 6px;
 }
@@ -66,7 +67,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border);
 }
 
 .profile-item {
@@ -76,24 +77,24 @@
 
 .profile-label {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .profile-value {
-  color: #fff;
+  color: var(--text-primary);
   font-size: 0.9rem;
   font-weight: 600;
 }
 
 .profile-value.highlight {
-  color: #00f5a0;
+  color: var(--accent);
 }
 
 /* Expandable */
 .expandable {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--border);
 }
 
 .expandable:last-child {
@@ -108,7 +109,7 @@
   padding: 0.85rem 1.25rem;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -116,12 +117,16 @@
 }
 
 .expand-btn:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--bg-card-hover);
+}
+
+.expand-btn svg:first-child {
+  color: var(--accent);
 }
 
 .expand-btn svg:last-child {
   margin-left: auto;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-muted);
 }
 
 .expand-content {
@@ -142,8 +147,8 @@
 }
 
 .variant-item {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.85rem;
 }
@@ -158,12 +163,12 @@
 
 .variant-rsid {
   font-weight: 700;
-  color: #00d9f5;
+  color: var(--accent);
   font-size: 0.9rem;
 }
 
 .variant-star {
-  color: #00f5a0;
+  color: var(--risk-safe);
   font-weight: 600;
   font-size: 0.85rem;
 }
@@ -176,27 +181,27 @@
 }
 
 .variant-effect.non-functional {
-  background: rgba(255, 107, 107, 0.15);
-  color: #ff6b6b;
+  background: var(--risk-danger-bg);
+  color: var(--risk-danger);
 }
 
 .variant-effect.decreased, .variant-effect.decreased_transport {
-  background: rgba(255, 217, 61, 0.15);
-  color: #ffd93d;
+  background: var(--risk-warn-bg);
+  color: var(--risk-warn);
 }
 
 .variant-effect.functional, .variant-effect.normal {
-  background: rgba(0, 245, 160, 0.15);
-  color: #00f5a0;
+  background: var(--risk-safe-bg);
+  color: var(--risk-safe);
 }
 
 .variant-effect.increased {
-  background: rgba(0, 217, 245, 0.15);
-  color: #00d9f5;
+  background: var(--risk-info-bg);
+  color: var(--risk-info);
 }
 
 .variant-desc {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
   font-size: 0.82rem;
   line-height: 1.5;
 }
@@ -206,11 +211,11 @@
   gap: 1rem;
   margin-top: 0.4rem;
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-muted);
 }
 
 .no-data {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   font-size: 0.85rem;
   font-style: italic;
 }
@@ -221,7 +226,7 @@
 }
 
 .rec-section h4 {
-  color: #00d9f5;
+  color: var(--accent);
   font-size: 0.82rem;
   font-weight: 700;
   margin-bottom: 0.25rem;
@@ -230,7 +235,7 @@
 }
 
 .rec-section p {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 0.88rem;
   line-height: 1.6;
 }
@@ -241,21 +246,21 @@
 }
 
 .rec-section li {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 0.85rem;
   padding: 0.2rem 0;
 }
 
 .rec-section li::before {
   content: '→ ';
-  color: #00f5a0;
+  color: var(--accent);
 }
 
 .rec-badge {
   display: inline-block;
   padding: 0.3rem 0.7rem;
-  background: rgba(0, 245, 160, 0.08);
-  color: #00f5a0;
+  background: var(--accent-soft);
+  color: var(--accent);
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 600;
@@ -267,28 +272,28 @@
 }
 
 .ai-section h4 {
-  color: #00d9f5;
+  color: var(--accent);
   font-size: 0.82rem;
   font-weight: 700;
   margin-bottom: 0.25rem;
 }
 
 .ai-section p {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 0.85rem;
   line-height: 1.6;
 }
 
 .ai-section.patient-friendly {
-  background: rgba(0, 245, 160, 0.04);
-  border: 1px solid rgba(0, 245, 160, 0.1);
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 1rem;
 }
 
 .ai-model {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--text-muted);
 }
 
 /* JSON */
@@ -303,9 +308,9 @@
   align-items: center;
   gap: 0.3rem;
   padding: 0.4rem 0.75rem;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 0.8rem;
   cursor: pointer;
@@ -313,16 +318,16 @@
 }
 
 .json-actions button:hover {
-  background: rgba(0, 245, 160, 0.1);
-  color: #00f5a0;
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .json-block {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 1rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 0.72rem;
   line-height: 1.4;
   overflow-x: auto;
