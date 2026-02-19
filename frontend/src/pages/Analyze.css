@@ -38,11 +38,30 @@
   align-items: start;
 }
 
-.input-section {
+.input-section,
+.results-section {
   position: sticky;
   top: 80px;
   max-height: calc(100vh - 100px);
   overflow-y: auto;
+  padding-right: 0.5rem; /* Space for scrollbar */
+}
+
+/* Custom scrollbar for sticky sections */
+.input-section::-webkit-scrollbar,
+.results-section::-webkit-scrollbar {
+  width: 5px;
+}
+
+.input-section::-webkit-scrollbar-track,
+.results-section::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.input-section::-webkit-scrollbar-thumb,
+.results-section::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
 
 /* Cards */
@@ -297,6 +316,13 @@
   border-top-color: #0a0a14;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
+}
+
+.spinner.small {
+  width: 14px;
+  height: 14px;
+  border-width: 1.5px;
+  border-top-color: #00d9f5;
 }
 
 /* Results Section */
