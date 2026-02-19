@@ -38,10 +38,11 @@ export default function Analyze() {
       return;
     }
     if (acceptedFiles.length > 0) {
-      setFile(acceptedFiles[0]);
+      const selectedFile = acceptedFiles[0];
+      setFile(selectedFile);
       setValidationResult(null);
       setResults(null);
-      toast.success(`File loaded: ${acceptedFiles[0].name}`);
+      toast.success(`File loaded: ${selectedFile.name}`);
     }
   }, []);
 
@@ -66,6 +67,7 @@ export default function Analyze() {
 
   async function handleAnalyze() {
     if (!file) return toast.error('Please upload a VCF file');
+    if (!validationResult?.valid) return toast.error('Please upload a valid VCF file');
 
     // Get drug list from selected chips + text input
     let drugs = [...selectedDrugs];
@@ -133,12 +135,15 @@ export default function Analyze() {
     }
   }
 
-  async function handleValidate() {
-    if (!file) return toast.error('Please upload a VCF file first');
+  const [validating, setValidating] = useState(false);
 
+  async function handleValidate(fileToValidate = file) {
+    if (!fileToValidate) return toast.error('Please upload a VCF file first');
+
+    setValidating(true);
     try {
       const formData = new FormData();
-      formData.append('vcfFile', file);
+      formData.append('vcfFile', fileToValidate);
       
       const response = await fetch(`${API_URL}/api/validate-vcf`, {
         method: 'POST',
@@ -151,6 +156,8 @@ export default function Analyze() {
       else toast.error('VCF file has issues');
     } catch (error) {
       toast.error('Validation failed');
+    } finally {
+      setValidating(false);
     }
   }
 
@@ -190,8 +197,13 @@ export default function Analyze() {
                     </div>
                   </div>
                   <div className="file-actions">
-                    <button className="btn-validate" onClick={handleValidate}>
-                      <FiCheckCircle /> Validate
+                    <button 
+                      className="btn-validate" 
+                      onClick={() => handleValidate()}
+                      disabled={validating}
+                    >
+                      {validating ? <span className="spinner small"></span> : <FiCheckCircle />} 
+                      {validating ? 'Validating...' : 'Validate'}
                     </button>
                     <button className="btn-remove" onClick={removeFile}>
                       <FiX />
@@ -215,6 +227,7 @@ export default function Analyze() {
                   )}
                 </div>
               )}
+
             </div>
 
             {/* Drug Selection */}
@@ -250,7 +263,7 @@ export default function Analyze() {
             <button
               className="btn-analyze"
               onClick={handleAnalyze}
-              disabled={loading || !file}
+              disabled={loading || !file || !validationResult?.valid || validating}
             >
               {loading ? (
                 <>
@@ -259,7 +272,7 @@ export default function Analyze() {
               ) : (
                 < >
                   <GiDna1 /> Run Analysis
-                </>
+                </ >
               )}
             </button>
           </div>
