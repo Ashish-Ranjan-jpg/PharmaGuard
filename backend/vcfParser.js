@@ -2,9 +2,15 @@
  * VCF Parser Module
  * Parses Variant Call Format (VCF v4.2) files and extracts pharmacogenomic variants
  * for 6 critical genes: CYP2D6, CYP2C19, CYP2C9, SLCO1B1, TPMT, DPYD
+ *
+ * Supports two detection modes:
+ *  1. INFO-based: VCF files with GENE=, STAR=, RS= tags in the INFO field
+ *  2. rsID-based fallback: Looks up rsIDs in the pharmacogenomics knowledge base
  */
 
-const TARGET_GENES = ['CYP2D6', 'CYP2C19', 'CYP2C9', 'SLCO1B1', 'TPMT', 'DPYD'];
+const { VARIANT_DATABASE } = require("./pharmacoKB");
+
+const TARGET_GENES = ["CYP2D6", "CYP2C19", "CYP2C9", "SLCO1B1", "TPMT", "DPYD"];
 
 /**
  * Parse a VCF file content string into structured variant data
@@ -12,12 +18,15 @@ const TARGET_GENES = ['CYP2D6', 'CYP2C19', 'CYP2C9', 'SLCO1B1', 'TPMT', 'DPYD'];
  * @returns {object} Parsed VCF data with metadata and variants
  */
 function parseVCF(vcfContent) {
-  const lines = vcfContent.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const lines = vcfContent
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0);
   const result = {
     metadata: {
-      fileFormat: '',
-      source: '',
-      reference: '',
+      fileFormat: "",
+      source: "",
+      reference: "",
       sampleIds: [],
     },
     variants: [],
@@ -31,19 +40,19 @@ function parseVCF(vcfContent) {
 
     for (const line of lines) {
       // Meta-information lines
-      if (line.startsWith('##')) {
+      if (line.startsWith("##")) {
         const meta = parseMetaLine(line);
-        if (meta.key === 'fileformat') result.metadata.fileFormat = meta.value;
-        if (meta.key === 'source') result.metadata.source = meta.value;
-        if (meta.key === 'reference') result.metadata.reference = meta.value;
+        if (meta.key === "fileformat") result.metadata.fileFormat = meta.value;
+        if (meta.key === "source") result.metadata.source = meta.value;
+        if (meta.key === "reference") result.metadata.reference = meta.value;
         continue;
       }
 
       // Header line
-      if (line.startsWith('#CHROM')) {
-        headerColumns = line.substring(1).split('\t');
+      if (line.startsWith("#CHROM")) {
+        headerColumns = line.substring(1).split("\t");
         // Extract sample IDs (columns after FORMAT)
-        const formatIdx = headerColumns.indexOf('FORMAT');
+        const formatIdx = headerColumns.indexOf("FORMAT");
         if (formatIdx !== -1 && formatIdx < headerColumns.length - 1) {
           result.metadata.sampleIds = headerColumns.slice(formatIdx + 1);
         }
@@ -56,7 +65,13 @@ function parseVCF(vcfContent) {
         result.variants.push(variant);
 
         // Check if this variant is pharmacogenomically relevant
-        if (variant.gene && TARGET_GENES.includes(variant.gene.toUpperCase())) {
+        // Only include variants where the patient actually carries the alternate allele (not 0/0)
+        const variantZygosity = determineZygosity(variant.genotype);
+        if (
+          variant.gene &&
+          TARGET_GENES.includes(variant.gene.toUpperCase()) &&
+          variantZygosity !== "homozygous_reference"
+        ) {
           result.pharmacogenomicVariants.push({
             rsid: variant.rsid || variant.id,
             gene: variant.gene.toUpperCase(),
@@ -69,7 +84,7 @@ function parseVCF(vcfContent) {
             quality: variant.qual,
             filter: variant.filter,
             zygosity: determineZygosity(variant.genotype),
-            clinicalSignificance: variant.clinicalSignificance || 'unknown',
+            clinicalSignificance: variant.clinicalSignificance || "unknown",
             frequency: variant.frequency || null,
           });
         }
@@ -80,7 +95,6 @@ function parseVCF(vcfContent) {
     if (result.metadata.sampleIds.length > 0) {
       result.patientId = result.metadata.sampleIds[0];
     }
-
   } catch (error) {
     result.parsingSuccess = false;
     result.errors.push(`VCF parsing error: ${error.message}`);
@@ -97,23 +111,23 @@ function parseMetaLine(line) {
   if (match) {
     return { key: match[1].toLowerCase(), value: match[2] };
   }
-  return { key: '', value: '' };
+  return { key: "", value: "" };
 }
 
 /**
  * Parse a single variant data line
  */
 function parseVariantLine(line, headerColumns) {
-  const fields = line.split('\t');
+  const fields = line.split("\t");
   if (fields.length < 8) return null;
 
   const variant = {
     chrom: fields[0],
     pos: parseInt(fields[1]),
-    id: fields[2] || '.',
+    id: fields[2] || ".",
     ref: fields[3],
     alt: fields[4],
-    qual: fields[5] !== '.' ? parseFloat(fields[5]) : null,
+    qual: fields[5] !== "." ? parseFloat(fields[5]) : null,
     filter: fields[6],
     info: parseInfoField(fields[7]),
     genotype: null,
@@ -125,12 +139,14 @@ function parseVariantLine(line, headerColumns) {
   };
 
   // Extract rsID
-  if (variant.id && variant.id.startsWith('rs')) {
+  if (variant.id && variant.id.startsWith("rs")) {
     variant.rsid = variant.id;
   }
   // Also check INFO field for RS tag
   if (variant.info.RS) {
-    variant.rsid = variant.info.RS.startsWith('rs') ? variant.info.RS : `rs${variant.info.RS}`;
+    variant.rsid = variant.info.RS.startsWith("rs")
+      ? variant.info.RS
+      : `rs${variant.info.RS}`;
   }
 
   // Extract gene from INFO
@@ -143,7 +159,21 @@ function parseVariantLine(line, headerColumns) {
     variant.starAllele = variant.info.STAR;
   }
 
-  // Extract clinical significance
+  // rsID-based fallback: If gene/starAllele not found in INFO, look up rsID in knowledge base
+  if (variant.rsid && VARIANT_DATABASE[variant.rsid]) {
+    const dbEntry = VARIANT_DATABASE[variant.rsid];
+    if (!variant.gene) {
+      variant.gene = dbEntry.gene;
+    }
+    if (!variant.starAllele) {
+      variant.starAllele = dbEntry.starAllele;
+    }
+    if (!variant.clinicalSignificance) {
+      variant.clinicalSignificance = dbEntry.effect || "drug_response";
+    }
+  }
+
+  // Extract clinical significance from INFO (overrides DB fallback if present)
   if (variant.info.CLNSIG) {
     variant.clinicalSignificance = variant.info.CLNSIG;
   }
@@ -157,9 +187,9 @@ function parseVariantLine(line, headerColumns) {
   if (fields.length > 9) {
     const formatField = fields[8];
     const sampleField = fields[9];
-    const formatKeys = formatField.split(':');
-    const sampleValues = sampleField.split(':');
-    const gtIndex = formatKeys.indexOf('GT');
+    const formatKeys = formatField.split(":");
+    const sampleValues = sampleField.split(":");
+    const gtIndex = formatKeys.indexOf("GT");
     if (gtIndex !== -1 && gtIndex < sampleValues.length) {
       variant.genotype = sampleValues[gtIndex];
     }
@@ -173,11 +203,11 @@ function parseVariantLine(line, headerColumns) {
  */
 function parseInfoField(infoStr) {
   const info = {};
-  if (!infoStr || infoStr === '.') return info;
+  if (!infoStr || infoStr === ".") return info;
 
-  const pairs = infoStr.split(';');
+  const pairs = infoStr.split(";");
   for (const pair of pairs) {
-    const eqIndex = pair.indexOf('=');
+    const eqIndex = pair.indexOf("=");
     if (eqIndex !== -1) {
       const key = pair.substring(0, eqIndex);
       const value = pair.substring(eqIndex + 1);
@@ -193,13 +223,13 @@ function parseInfoField(infoStr) {
  * Determine zygosity from genotype string
  */
 function determineZygosity(genotype) {
-  if (!genotype) return 'unknown';
+  if (!genotype) return "unknown";
   const alleles = genotype.split(/[\/\|]/);
-  if (alleles.length !== 2) return 'unknown';
+  if (alleles.length !== 2) return "unknown";
   if (alleles[0] === alleles[1]) {
-    return alleles[0] === '0' ? 'homozygous_reference' : 'homozygous_variant';
+    return alleles[0] === "0" ? "homozygous_reference" : "homozygous_variant";
   }
-  return 'heterozygous';
+  return "heterozygous";
 }
 
 /**
@@ -209,21 +239,23 @@ function validateVCF(vcfContent) {
   const errors = [];
 
   if (!vcfContent || vcfContent.trim().length === 0) {
-    errors.push('VCF file is empty');
+    errors.push("VCF file is empty");
     return { valid: false, errors };
   }
 
-  if (!vcfContent.includes('##fileformat=VCF')) {
-    errors.push('Missing VCF file format header (##fileformat=VCF)');
+  if (!vcfContent.includes("##fileformat=VCF")) {
+    errors.push("Missing VCF file format header (##fileformat=VCF)");
   }
 
-  if (!vcfContent.includes('#CHROM')) {
-    errors.push('Missing column header line (#CHROM)');
+  if (!vcfContent.includes("#CHROM")) {
+    errors.push("Missing column header line (#CHROM)");
   }
 
-  const lines = vcfContent.split('\n').filter(l => l.trim().length > 0 && !l.startsWith('#'));
+  const lines = vcfContent
+    .split("\n")
+    .filter((l) => l.trim().length > 0 && !l.startsWith("#"));
   if (lines.length === 0) {
-    errors.push('No variant data lines found');
+    errors.push("No variant data lines found");
   }
 
   return { valid: errors.length === 0, errors };
