@@ -1,0 +1,342 @@
+.analyze-page {
+  min-height: 100vh;
+  padding: 5rem 1.5rem 3rem;
+}
+
+.analyze-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.analyze-header {
+  margin-bottom: 2rem;
+}
+
+.analyze-header h1 {
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-icon {
+  color: #00f5a0;
+  animation: spin 4s linear infinite;
+}
+
+.analyze-header p {
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.25rem;
+}
+
+.analyze-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Cards */
+.card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.card h2 {
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.card-desc {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.82rem;
+  margin-bottom: 1rem;
+}
+
+/* Dropzone */
+.dropzone {
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dropzone:hover, .dropzone.active {
+  border-color: rgba(0, 245, 160, 0.3);
+  background: rgba(0, 245, 160, 0.03);
+}
+
+.dropzone-icon {
+  font-size: 2.5rem;
+  color: rgba(0, 245, 160, 0.4);
+  margin-bottom: 0.75rem;
+}
+
+.dropzone-text {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.dropzone-hint {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.8rem;
+}
+
+/* File Preview */
+.file-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 245, 160, 0.05);
+  border: 1px solid rgba(0, 245, 160, 0.15);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.file-icon {
+  font-size: 1.5rem;
+  color: #00f5a0;
+}
+
+.file-info strong {
+  color: #fff;
+  font-size: 0.9rem;
+  display: block;
+}
+
+.file-info span {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+}
+
+.file-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-validate {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(0, 217, 245, 0.1);
+  color: #00d9f5;
+  border: 1px solid rgba(0, 217, 245, 0.2);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-validate:hover {
+  background: rgba(0, 217, 245, 0.2);
+}
+
+.btn-remove {
+  padding: 0.4rem;
+  background: rgba(255, 60, 60, 0.1);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 60, 60, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-remove:hover {
+  background: rgba(255, 60, 60, 0.2);
+}
+
+/* Validation */
+.validation-result {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.validation-result.valid {
+  background: rgba(0, 245, 160, 0.05);
+  color: #00f5a0;
+  border: 1px solid rgba(0, 245, 160, 0.15);
+}
+
+.validation-result.invalid {
+  background: rgba(255, 60, 60, 0.05);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 60, 60, 0.15);
+}
+
+/* Drug Chips */
+.drug-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.drug-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 0.15rem;
+}
+
+.drug-chip:hover {
+  border-color: rgba(0, 245, 160, 0.25);
+}
+
+.drug-chip.selected {
+  background: rgba(0, 245, 160, 0.1);
+  border-color: rgba(0, 245, 160, 0.4);
+}
+
+.chip-name {
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.chip-gene {
+  color: rgba(0, 217, 245, 0.7);
+  font-size: 0.7rem;
+}
+
+.drug-chip.selected .chip-name {
+  color: #00f5a0;
+}
+
+.drug-text-input {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.9rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.drug-text-input:focus {
+  border-color: rgba(0, 245, 160, 0.3);
+}
+
+.drug-text-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Analyze Button */
+.btn-analyze {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #00f5a0, #00d9f5);
+  color: #0a0a14;
+  font-weight: 800;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-analyze:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 245, 160, 0.3);
+}
+
+.btn-analyze:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(10, 10, 20, 0.3);
+  border-top-color: #0a0a14;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Results Section */
+.results-section {
+  position: sticky;
+  top: 80px;
+}
+
+.results-placeholder, .results-loading {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  color: rgba(0, 245, 160, 0.15);
+  margin-bottom: 1rem;
+}
+
+.results-placeholder h3, .results-loading h3 {
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.25rem;
+}
+
+.results-placeholder p, .results-loading p {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.85rem;
+}
+
+.dna-loader {
+  font-size: 3rem;
+  color: #00f5a0;
+  animation: spin 1.5s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 900px) {
+  .analyze-grid {
+    grid-template-columns: 1fr;
+  }
+  .results-section {
+    position: static;
+  }
+}
