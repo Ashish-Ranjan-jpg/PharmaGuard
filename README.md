@@ -3,8 +3,8 @@
 
 PharmaGuard is a precision medicine platform designed to bridge the gap between genetic data and clinical action. By analyzing patient VCF (Variant Call Format) files, it predicts personalized risks for critical medications, helping healthcare providers avoid adverse drug reactions and optimize treatment efficacy.
 
-[![Live Demo](https://getpharmaguard.netlify.app/)](YOUR_LIVE_DEMO_LINK_HERE)
-[![LinkedIn Video](https://www.linkedin.com/posts/vicky-raj-1b858b343_rift2026-pharmaguard-pharmacogenomics-activity-7430421858430177280-tqV-?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFYMf1wBDpnKKZGDPW_InYkt_JEJXqBDn00)](YOUR_LINKEDIN_VIDEO_LINK_HERE)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=vercel)](https://getpharmaguard.netlify.app/)
+[![LinkedIn Video](https://img.shields.io/badge/LinkedIn-Video-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/posts/vicky-raj-1b858b343_rift2026-pharmaguard-pharmacogenomics-activity-7430421858430177280-tqV-?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFYMf1wBDpnKKZGDPW_InYkt_JEJXqBDn00)
 
 ---
 
@@ -96,10 +96,10 @@ Updates user profile image in Cloudinary.
 
 ### 👥 Team Members
 
-- **Member Name** - Vicky Raj
-- **Member Name** - Ashish Ranjan
-- **Member Name** - Manish Kumar
-- **Member Name** - Ashutosh Kuamr
+- **Member Name** - Vicky Raj (https://www.linkedin.com/in/manish-kumar-a03172312?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
+- **Member Name** - Ashish Ranjan (https://www.linkedin.com/in/ashish-ranjan-jpg/)
+- **Member Name** - Manish Kumar (https://www.linkedin.com/in/manish-kumar-a03172312?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
+- **Member Name** - Ashutosh Kumar (https://www.linkedin.com/in/ashutosh-kumar-b77745358?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
 
 ---
 
